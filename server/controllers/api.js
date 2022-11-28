@@ -70,7 +70,7 @@ class ApiController {
         { where: { id: findUser.id } }
       );
 
-      res.status(200).json({ loginToken });
+      res.status(200).json({ response: { loginToken } });
     } catch (err) {
       next(err);
     }
