@@ -9,6 +9,7 @@ const { signToken } = require("../helpers/jwt");
 
 // Data
 let token;
+
 const users = [
   {
     name: "John Doe",
@@ -245,6 +246,10 @@ describe("POST /api/login", () => {
       "loginToken",
       expect.any(String)
     );
+
+    await request(app)
+      .post("/api/logout")
+      .set("loginToken", response.body.response.loginToken);
   });
 
   test("POST /api/login - failed test - empty email", async () => {
@@ -305,12 +310,12 @@ describe("POST /api/logout", () => {
       email: "johndoe@mail.com",
       password: "johndoe",
     };
-
     const { body } = await request(app).post("/api/login").send(payload);
+    const token = body.response.loginToken;
 
     const response = await request(app)
       .post("/api/logout")
-      .set("loginToken", body.response.loginToken);
+      .set("loginToken", token);
 
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Object);
@@ -331,8 +336,6 @@ describe("POST /api/logout", () => {
       email: "johndoe@mail.com",
       password: "johndoe",
     };
-
-    await request(app).post("/api/login").send(payload);
 
     const response = await request(app).post("/api/logout");
 
@@ -379,6 +382,8 @@ describe("GET /api", () => {
     expect(response.body).toBeInstanceOf(Object);
     expect(response.body.count).toEqual(data.length);
     expect(response.body.rows).toBeInstanceOf(Array);
+
+    // Data length is 8, so the result length must be 8 - 5 = 3
     expect(response.body.rows).toHaveLength(data.length - 5);
     expect(response.body.rows[0]).toHaveProperty("id", expect.any(Number));
     expect(response.body.rows[0]).toHaveProperty(
@@ -457,5 +462,70 @@ describe("GET /api", () => {
       "location",
       expect.any(String)
     );
+  });
+
+  test("GET /api/ - failed test - unauthorized (no login token included)", async () => {
+    const response = await request(app).get(`/api`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", "Unauthorized activity");
+  });
+
+  test("GET /api/ - failed test - expired token", async () => {
+    let expiredToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5kb2VAbWFpbC5jb20iLCJ1c2VyX2lkIjoxLCJpYXQiOjE2Njk4MDkxMTQsImV4cCI6MTY2OTgwOTEyNH0.lHs7SoriS-aGJkK1-IN3fNcYvH041LjIQ5QfV_NzKZU";
+    const response = await request(app)
+      .get(`/api`)
+      .set("loginToken", expiredToken);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Token expired, please login to continue"
+    );
+  });
+
+  test("GET /api/ - failed test - invalid token", async () => {
+    const payload = {
+      email: "johndoe@mail.com",
+      password: "johndoe",
+    };
+    const { body } = await request(app).post("/api/login").send(payload);
+    let token = body.response.loginToken.slice(0, -5) + "ABC123";
+
+    const response = await request(app).get(`/api`).set("loginToken", token);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", "Invalid token");
+  });
+});
+
+describe("GET /api/:deviceId", () => {
+  test("GET /api/:deviceId - success test", async () => {
+    const id = "D-1567";
+    const response = await request(app)
+      .get(`/api/${id}`)
+      .set("loginToken", token);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0]).toHaveProperty("id", expect.any(Number));
+    expect(response.body[0]).toHaveProperty("DeviceId", expect.any(String));
+    expect(response.body[0].DeviceId).toEqual(id);
+    expect(response.body[0]).toHaveProperty("DeviceType", expect.any(String));
+    expect(response.body[0]).toHaveProperty("Timestamp", expect.any(String));
+    expect(response.body[0]).toHaveProperty("location", expect.any(String));
+  });
+
+  test("GET /api/:deviceId - failed test - unauthorized (no login token included)", async () => {
+    const id = "D-1567";
+    const response = await request(app).get(`/api/${id}`);
+
+    expect(response.status).toBe(403);
+    expect(response.body).toBeInstanceOf(Object);
+    expect(response.body).toHaveProperty("message", "Unauthorized activity");
   });
 });

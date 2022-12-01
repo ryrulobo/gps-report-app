@@ -79,6 +79,7 @@ class ApiController {
   static async logout(req, res, next) {
     //! Store and update token in database inspired from: https://youtu.be/TO51hGC5zDA
     try {
+      console.log("masuk controller");
       if (req.headers && req.headers.logintoken) {
         const token = req.headers.logintoken;
         if (!token) throw { name: "Unauthorized" };
@@ -103,15 +104,13 @@ class ApiController {
 
   static async getAllData(req, res, next) {
     try {
-      const { page, size, q, id, type } = req.query;
+      let { page, size, q, id, type } = req.query;
       const { limit, offset } = getPagination(page - 1, size);
-
       const option = {
         attributes: { exclude: ["createdAt", "updatedAt"] },
         limit,
         offset,
       };
-
       // Filter by DeviceId or DeviceType
       //! Search in multiple columns inspired from https://stackoverflow.com/a/62440393/20202353
       if (!!q) {
@@ -133,12 +132,13 @@ class ApiController {
           },
         };
       }
-
-      // Sort by DeviceId
-      if (!!id) option.order = [["DeviceId", `${id.toUpperCase()}`]];
-
-      // Sort by DeviceId
-      if (!!type) option.order = [["DeviceType", `${type.toUpperCase()}`]];
+      //! Order by DeviceId or DeviceType
+      if (!id) id = "asc";
+      if (!type) type = "asc";
+      option.order = [
+        ["DeviceType", `${type.toUpperCase()}`],
+        ["DeviceId", `${id.toUpperCase()}`],
+      ];
 
       const result = await Data.findAndCountAll(option);
 

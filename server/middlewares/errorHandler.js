@@ -35,6 +35,11 @@ function errorHandler(err, req, res, next) {
       errCode = 401;
       message = "Invalid token";
       break;
+    case "TokenExpiredError":
+    case "Token expired":
+      errCode = 401;
+      message = "Token expired, please login to continue";
+      break;
     case "Unauthorized":
       errCode = 403;
       message = "Unauthorized activity";
