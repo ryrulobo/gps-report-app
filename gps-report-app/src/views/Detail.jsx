@@ -26,7 +26,7 @@ export default function Detail() {
       error: state.reducer.error,
     };
   });
-  //! Logout if token expired
+  //! Logout if token expired/invalid token
   if (dataById.error) {
     Swal.fire({
       icon: "error",

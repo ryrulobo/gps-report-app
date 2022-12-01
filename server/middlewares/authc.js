@@ -11,7 +11,9 @@ async function authc(req, res, next) {
 
     const findUser = await User.findByPk(decodedToken.user_id);
 
-    if (!findUser) {
+    const tokenCheck = findUser.tokens.find((e) => e.token == loginToken);
+
+    if (!findUser || !tokenCheck) {
       throw { name: "Invalid token" };
     } else {
       req.user = {

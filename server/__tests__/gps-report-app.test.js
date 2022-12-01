@@ -89,12 +89,19 @@ beforeAll(async () => {
         },
       });
     })
-    .then((res) => {
-      token = signToken({
-        email: res.email,
-        user_id: res.id,
+    .then(async () => {
+      const { body } = await request(app).post("/api/login").send({
+        email: "johndoe@mail.com",
+        password: "johndoe",
       });
+      token = body.response.loginToken;
     });
+  // .then((res) => {
+  //   token = signToken({
+  //     email: res.email,
+  //     user_id: res.id,
+  //   });
+  // });
 
   data.forEach((el) => {
     el.Timestamp = moment(el.Timestamp, "DD-MM-YYYY hh:mm").toDate();
@@ -307,8 +314,8 @@ describe("POST /api/login", () => {
 describe("POST /api/logout", () => {
   test("POST /api/logout - success test", async () => {
     const payload = {
-      email: "johndoe@mail.com",
-      password: "johndoe",
+      email: "janedoe@mail.com",
+      password: "janedoe",
     };
     const { body } = await request(app).post("/api/login").send(payload);
     const token = body.response.loginToken;
@@ -324,7 +331,7 @@ describe("POST /api/logout", () => {
     // Check if logout method clears tokens
     const { dataValues } = await User.findOne({
       where: {
-        email: users[0].email,
+        email: users[1].email,
       },
     });
     expect(dataValues.tokens).toBeInstanceOf(Array);

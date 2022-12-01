@@ -79,7 +79,6 @@ class ApiController {
   static async logout(req, res, next) {
     //! Store and update token in database inspired from: https://youtu.be/TO51hGC5zDA
     try {
-      console.log("masuk controller");
       if (req.headers && req.headers.logintoken) {
         const token = req.headers.logintoken;
         if (!token) throw { name: "Unauthorized" };

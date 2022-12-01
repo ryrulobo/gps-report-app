@@ -27,7 +27,7 @@ export default function TableHome(props) {
       error: state.reducer.error,
     };
   });
-  //! Logout if token expired
+  //! Logout if token expired/invalid token
   if (data.error) {
     dispatch(logout()).then(() => {
       Swal.fire({
