@@ -1,0 +1,38 @@
+.bg-color {
+  background-color: #ebf2fa;
+}
+
+.bg-color-login {
+  background-color: #222831;
+}
+
+.btn-color {
+  background-color: #0e1c36;
+  color: #fff;
+}
+
+.profile-image-pic {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+}
+
+.cardbody-color {
+  background-color: #ebf2fa;
+}
+
+a {
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
+.font-poppins {
+  font-family: "Poppins", sans-serif;
+}
