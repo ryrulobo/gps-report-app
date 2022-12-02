@@ -1,92 +1,8 @@
-# GPS Report App
+# Manual Test Case
 
-A simple report application to store the GPS data of their devices and provide insights from the data.
-
-`Created using React Js and Postgresql`
-
-Port
-
-```json
-Server: localhost:3000/
-Client: localhost:4000/
-```
-
-Demo: `./assets/demo/demo.mp4`
-
-Solution: `./solution.md`
-
-Manual Test Case: `./manual-test-case.md`
-
-## Project Setup
-
-- **Server**
-
-  For local development, create a local `.env` file using template from `.env.template`.
-
-  **Install depedency modules**
-
-  After installing dependencies, user should create, migrate, and seed database.
-
-  ```
-  npm install
-  npx sequelize db:create
-  npx sequelize db:migrate
-  npx sequelize db:seed:all
-  ```
-
-  **Run and compile server scripts**
-
-  ```
-  npm start
-  ```
-
-  **Run server unit test**
-
-  First, uncomment scripts in `.sequelizerc` file. And then create and migrate new database_test using:
-
-  ```
-  npx sequelize db:create
-  npx sequelize db:migrate
-  ```
-
-  **Run the test**
-
-  ```
-  npm run test
-  ```
-
-  After running server test, comment scripts in `.sequelizerc` file.
-
-- **Client**
-
-  **Install depedency modules**
-
-  ```
-  npm install
-  ```
-
-  **Run and compile server scripts**
-
-  ```
-  cd gps-report-app
-  npm start
-  ```
-
-## Endpoints
-
-List of Available Endpoints:
-
-- `POST /api/signup`
-- `POST /api/login`
-- `POST /api/logout`
-- `GET /api`
-- `GET /api/:deviceId`
+API manual testing involves sending API requests to the server and waiting for the server's response. In this project, testing is done using Postman.
 
 ### POST /api/signup
-
-#### Description
-
-- Register new user. User should input name, email, and password. Saved password will be encrypted in the database.
 
 #### Request
 
@@ -119,32 +35,33 @@ _400 - Bad Request_
 - Body
 
   ```json
+  // [Empty user name input]
   {
     "message": "Please provide a user name"
   }
   OR
+  // [Empty email input]
   {
     "message": "Please provide an email"
   }
   OR
+  // [Empty password input]
   {
     "message": "Please provide a password"
   }
   OR
+  // [Invalid email input]
   {
     "message": "Email must be valid"
   }
   OR
+  // [Password input length less than 5 characters]
   {
     "message": "Minimum password length is 5 characters"
   }
   ```
 
 ### POST /api/login
-
-#### Description
-
-- Login allows a user to gain access to the application by entering existed email and password. Login token only valid for 1 day after user login. After that, user should login again to refresh their login token and gain access to the application.
 
 #### Request
 
@@ -176,10 +93,12 @@ _400 - Bad Request_
 - Body
 
   ```json
+  // [Empty email input]
   {
     "message": "Please provide an email"
   }
   OR
+  // [Empty password input]
   {
     "message": "Please provide a password"
   }
@@ -190,16 +109,13 @@ _401 - Unauthorized_
 - Body
 
   ```json
+  // [Input wrong email or password]
   {
     "message": "Invalid email/password"
   }
   ```
 
 ### POST /api/logout
-
-#### Description
-
-- Logout current user. User will need to pass the login token in order to logout.
 
 #### Request
 
@@ -228,20 +144,18 @@ _401 - Unauthorized_
 - Body
 
   ```json
+  // [Expired token]
   {
     "message": "Token expired, please login to continue"
   }
   OR
+  // [Using wrong login token]
   {
     "message": "Invalid token"
   }
   ```
 
 ### GET /api
-
-#### Description
-
-- Get data GPS data from database. Data can be sorted and filtered by Device ID or Device Type. Pagination can also be applied to the server when server is getting a page parameter from the request.
 
 #### Request
 
@@ -290,20 +204,18 @@ _401 - Unauthorized_
 - Body
 
   ```json
+  // [Expired token]
   {
     "message": "Token expired, please login to continue"
   }
   OR
+  // [Using wrong login token]
   {
     "message": "Invalid token"
   }
   ```
 
 ### GET /api/:deviceID
-
-#### Description
-
-- Get data GPS data based on the device ID.
 
 #### Request
 
@@ -341,39 +253,13 @@ _401 - Unauthorized_
 - Body
 
   ```json
+  // [Expired token]
   {
     "message": "Token expired, please login to continue"
   }
   OR
+  // [Using wrong login token]
   {
     "message": "Invalid token"
   }
   ```
-
-### Global Error
-
-#### Response
-
-_400 - SequelizeValidationError_ OR _400 - SequelizeUniqueConstraintError_
-
-## Screenshots
-
-### Login Page
-
-![login-page](assets/screenshots/login-page.png)
-
-### Register Page
-
-![register-page](assets/screenshots/register-page.png)
-
-### Home Page
-
-![home-page](assets/screenshots/home-page.png)
-
-### Detail Page
-
-![detail-page](assets/screenshots/detail-page.png)
-
-### Server Test
-
-![server-test](assets/screenshots/server-test.png)

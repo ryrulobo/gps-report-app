@@ -109,8 +109,6 @@ export const fetchDataSuccess = (payload) => {
 export const fetchData = (page, q, id, type) => {
   return async (dispatch, getState) => {
     try {
-      if (!!q) page = 1;
-
       const options = {
         method: "GET",
         url: `${baseURL}/api?page=${page}&q=${q}&type=${type}&id=${id}`,

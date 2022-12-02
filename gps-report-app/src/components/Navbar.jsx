@@ -20,7 +20,7 @@ export default function Navbar() {
         dispatch(logout()).then((res) => {
           Swal.fire({
             icon: "success",
-            title: "Session expired, please login to continue",
+            title: "Logged out successfully",
           });
           navigate("/login");
         });
